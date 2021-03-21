@@ -31,9 +31,4 @@ class DefaultStats: Stats {
 
         return stats
     }
-
-
-//    Uniform distribution:
-//    R = random number between 0 and 1
-//    min + (max - min) * R
 }

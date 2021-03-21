@@ -4,8 +4,6 @@ import com.nhaarman.mockitokotlin2.argumentCaptor
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.ArgumentCaptor
-import org.mockito.Captor
 import org.mockito.Mockito.*
 import java.lang.Thread.sleep
 import java.util.*
@@ -17,11 +15,6 @@ class FirstInFirstOutDeliveryTest {
     private lateinit var timer: Timer
     private lateinit var stats: Stats
     private lateinit var timeHelper: TimeHelper
-
-//    @Captor
-//    private lateinit var foodWaitTimeCaptor: ArgumentCaptor<Int>
-//    @Captor
-//    private lateinit var courierWaitTimeCaptor: ArgumentCaptor<Long>
 
     private val order = Order(
         id = "456",
