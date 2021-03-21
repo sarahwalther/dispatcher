@@ -19,7 +19,7 @@ class DeliveryManagerTest {
 
     @Test
     fun `processOrders schedules the orders`() {
-        deliveryManager.processOrders<FirstInFirstOutDelivery>()
+        deliveryManager.processOrders()
 
         val ordersCaptor = argumentCaptor<Order>()
 

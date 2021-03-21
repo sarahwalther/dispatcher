@@ -1,6 +1,5 @@
 package com.css.dispatcher
 
-import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import java.io.File
 
@@ -8,11 +7,11 @@ import java.io.File
 class DeliveryManager(
     private val deliveryStrategy: DeliveryStrategy
 ) {
-    fun <DeliveryStrategy> processOrders() {
+    fun processOrders() {
         val mapper = ObjectMapper()
 
         val jsonString: String = File("./src/main/resources/dispatch_orders.json").readText(Charsets.UTF_8)
-        val orderDTOs: List<OrderDTO> = mapper.readValue(jsonString, object : TypeReference<List<OrderDTO?>?>() {})
+        val orderDTOs: List<OrderDTO> = mapper.readValue(jsonString, mapper.typeFactory.constructCollectionType(MutableList::class.java, OrderDTO::class.java))
 
         val orders = orderDTOs.toOrders()
 

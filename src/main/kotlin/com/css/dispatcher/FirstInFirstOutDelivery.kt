@@ -1,20 +1,8 @@
 package com.css.dispatcher
 
-import java.lang.System.currentTimeMillis
 import java.util.*
 import kotlin.concurrent.timerTask
 
-
-interface TimeHelper {
-    fun getCurrentTimeInMillis(): Long
-}
-
-class DefaultTimeHelper: TimeHelper {
-    override fun getCurrentTimeInMillis(): Long {
-        return currentTimeMillis()
-    }
-
-}
 
 class CourierArrivalComparator {
 

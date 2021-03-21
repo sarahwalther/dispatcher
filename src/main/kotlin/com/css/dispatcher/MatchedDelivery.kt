@@ -5,9 +5,9 @@ import kotlin.concurrent.timerTask
 
 
 class MatchedDelivery (
-    private val dispatcher: Dispatcher,
-    private val timer: Timer,
-    private val stats: Stats
+    private val dispatcher: Dispatcher = DefaultDispatcher(),
+    private val timer: Timer = Timer(),
+    private val stats: Stats = DefaultStats()
 ): DeliveryStrategy {
     override fun dispatch(order: Order) {
         val courier = dispatcher.requestCourier()

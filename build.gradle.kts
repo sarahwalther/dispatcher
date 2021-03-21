@@ -17,9 +17,9 @@ repositories {
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter")
+	implementation("org.springframework.boot:spring-boot-starter-json")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-	implementation("com.fasterxml.jackson.core:jackson-databind:2.0.1")
 
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
@@ -34,4 +34,10 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+tasks.bootRun {
+	if (project.hasProperty("args")) {
+		args(project.property("args").toString().split(","))
+	}
 }

@@ -7,5 +7,13 @@ import org.springframework.boot.runApplication
 class DispatcherApplication
 
 fun main(args: Array<String>) {
-	runApplication<DispatcherApplication>(*args)
+	if (args[0] == "MATCHED") {
+		val deliveryStrategy = MatchedDelivery()
+		DeliveryManager(deliveryStrategy).processOrders()
+	}
+
+	else if(args[0] == "FIRST_IN_FIRST_OUT") {
+		val deliveryStrategy = FirstInFirstOutDelivery()
+		DeliveryManager(deliveryStrategy).processOrders()
+	}
 }
