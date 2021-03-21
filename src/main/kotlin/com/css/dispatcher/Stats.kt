@@ -1,7 +1,6 @@
 package com.css.dispatcher
 
 interface Stats {
-    fun calculateStatistics(courier: Courier): Statistics
     fun calculateStatistics(foodWaitTime: Long, courierWaitTime: Long): Statistics
 }
 
@@ -11,21 +10,6 @@ class DefaultStats: Stats {
         averageFoodWaitTime = null,
         averageCourierWaitTime = null
     )
-
-    override fun calculateStatistics(courier: Courier): Statistics {
-        val numberOfOrdersProcessed = stats.ordersProcessed + 1
-        val previousAverageFoodWaitTime = stats.averageFoodWaitTime?.times(stats.ordersProcessed)
-        val averageFoodWaitTime = (previousAverageFoodWaitTime ?: 0).plus(courier.arrivalTime).div(numberOfOrdersProcessed)
-        stats = Statistics(
-            averageFoodWaitTime = averageFoodWaitTime,
-            averageCourierWaitTime = 0,
-            ordersProcessed = numberOfOrdersProcessed
-        )
-        println("Average food wait time: ${stats.averageFoodWaitTime} milliseconds between order ready and pickup")
-        println("Average courier wait time ${stats.averageCourierWaitTime} milliseconds")
-
-        return stats
-    }
 
     override fun calculateStatistics(foodWaitTime: Long, courierWaitTime: Long): Statistics {
         val numberOfOrdersProcessed = stats.ordersProcessed + 1
@@ -43,7 +27,7 @@ class DefaultStats: Stats {
         )
 
         println("Average food wait time: ${stats.averageFoodWaitTime} milliseconds between order ready and pickup")
-        println("Average courier wait time ${stats.averageCourierWaitTime} milliseconds")
+        println("Average courier wait time ${stats.averageCourierWaitTime} milliseconds between arrival and order pickup")
 
         return stats
     }

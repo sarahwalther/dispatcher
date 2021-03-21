@@ -6,15 +6,10 @@ import kotlin.concurrent.timerTask
 
 
 interface TimeHelper {
-    fun getCurrentTimeInS(): Long
     fun getCurrentTimeInMillis(): Long
 }
 
 class DefaultTimeHelper: TimeHelper {
-    override fun getCurrentTimeInS(): Long {
-        return currentTimeMillis() / 1000
-    }
-
     override fun getCurrentTimeInMillis(): Long {
         return currentTimeMillis()
     }
@@ -33,10 +28,10 @@ class CourierArrivalComparator {
 }
 
 class FirstInFirstOutDelivery (
-    private val dispatcher: Dispatcher,
-    private val timer: Timer,
-    private val stats: Stats,
-    private val timeHelper: TimeHelper
+    private val dispatcher: Dispatcher = DefaultDispatcher(),
+    private val timer: Timer = Timer(),
+    private val stats: Stats = DefaultStats(),
+    private val timeHelper: TimeHelper = DefaultTimeHelper()
 ): DeliveryStrategy {
     private val couriers: PriorityQueue<Courier> = PriorityQueue(CourierArrivalComparator)
 
@@ -45,11 +40,10 @@ class FirstInFirstOutDelivery (
         newCourier.arrivalPointInTime = timeHelper.getCurrentTimeInMillis() + (newCourier.arrivalTime * 1000)
         couriers.add(newCourier)
 
-
+//        TODO: Make it so the courier wait time is respected in the execution
         val action: TimerTask.() -> Unit = {
             val courier = couriers.remove()
-            val currentTimeInMillis = timeHelper.getCurrentTimeInMillis()
-            val waitTime: Long = currentTimeInMillis - courier.arrivalPointInTime
+            val waitTime: Long = timeHelper.getCurrentTimeInMillis() - courier.arrivalPointInTime
             if (waitTime > 0) {
                 stats.calculateStatistics(0, waitTime)
             } else {

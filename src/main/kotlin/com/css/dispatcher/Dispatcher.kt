@@ -5,7 +5,5 @@ interface  Dispatcher {
 }
 
 class DefaultDispatcher: Dispatcher {
-    override fun requestCourier(): Courier {
-        TODO("Not yet implemented")
-    }
+    override fun requestCourier(): Courier = Courier()
 }

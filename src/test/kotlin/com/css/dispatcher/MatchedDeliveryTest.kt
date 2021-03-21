@@ -12,24 +12,15 @@ internal class MatchedDeliveryTest {
     private lateinit var timer: Timer
     private lateinit var stats: Stats
 
-    val order1 = Order(
-        id = "123",
-        name = "order 1",
-        prepTime = 1
-    )
-    val order2 = Order(
+    private val order = Order(
         id = "456",
         name = "order 2",
         prepTime = 4
     )
-    val zeroTimeOrder = Order(
+    private val zeroTimeOrder = Order(
         id = "zero-time-order",
         name = "zero time order",
         prepTime = 0
-    )
-    private val orders = listOf(
-        zeroTimeOrder,
-        order2
     )
 
     @BeforeEach
@@ -39,6 +30,41 @@ internal class MatchedDeliveryTest {
         stats = mock(Stats::class.java)
         matchedDelivery = MatchedDelivery(dispatcher, timer, stats)
     }
+
+    @Test
+    internal fun `dispatch dispatches a delivery driver when receiving an order`() {
+        val courier = Courier()
+        `when`(dispatcher.requestCourier()).thenReturn(courier)
+
+        matchedDelivery.dispatch(zeroTimeOrder)
+
+        verify(dispatcher).requestCourier()
+    }
+
+    @Test
+    internal fun `dispatch schedules a delivery`() {
+        val courier = Courier(3)
+        `when`(dispatcher.requestCourier()).thenReturn(courier)
+
+        matchedDelivery.dispatch(order)
+
+        verify(timer).schedule(any(), eq(4000L))
+    }
+
+    @Test
+    internal fun `when the courier arrives faster than the food prepTime, the system logs 0 for foodWaitTime and the appropriate time for delivery time`() {
+        timer = Timer()
+        matchedDelivery = MatchedDelivery(dispatcher, timer, stats)
+
+        val courier = Courier(3)
+        `when`(dispatcher.requestCourier()).thenReturn(courier)
+        matchedDelivery.dispatch(zeroTimeOrder)
+
+        sleep(5)
+        verify(stats).calculateStatistics(3, 0)
+    }
+}
+
 
 //    @Test
 //    fun `processOrders schedules the orders`() {
@@ -80,37 +106,3 @@ internal class MatchedDeliveryTest {
 //        sleep(5)
 //        verify(stats).calculateStatistics(courier)
 //    }
-
-    @Test
-    internal fun `dispatch dispatches a delivery driver when receiving an order`() {
-        val courier = Courier()
-        `when`(dispatcher.requestCourier()).thenReturn(courier)
-
-        matchedDelivery.dispatch(zeroTimeOrder)
-
-        verify(dispatcher).requestCourier()
-    }
-
-    @Test
-    internal fun `dispatch schedules a delivery`() {
-        val courier = Courier(3)
-        `when`(dispatcher.requestCourier()).thenReturn(courier)
-
-        matchedDelivery.dispatch(order2)
-
-        verify(timer).schedule(any(), eq(4000L))
-    }
-
-    @Test
-    internal fun `when the courier arrives faster than the food prepTime, the system logs 0 for foodWaitTime and the appropriate time for delivery time`() {
-        timer = Timer()
-        matchedDelivery = MatchedDelivery(dispatcher, timer, stats)
-
-        val courier = Courier(3)
-        `when`(dispatcher.requestCourier()).thenReturn(courier)
-        matchedDelivery.dispatch(zeroTimeOrder)
-
-        sleep(5)
-        verify(stats).calculateStatistics(3, 0)
-    }
-}
