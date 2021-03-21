@@ -4,13 +4,14 @@ interface Stats {
     fun calculateStatistics(foodWaitTime: Long, courierWaitTime: Long): Statistics
 }
 
-class DefaultStats: Stats {
+class DefaultStats : Stats {
     var stats = Statistics(
         ordersProcessed = 0,
         averageFoodWaitTime = null,
         averageCourierWaitTime = null
     )
 
+    @Synchronized
     override fun calculateStatistics(foodWaitTime: Long, courierWaitTime: Long): Statistics {
         val numberOfOrdersProcessed = stats.ordersProcessed + 1
 
@@ -18,7 +19,8 @@ class DefaultStats: Stats {
         val averageFoodWaitTime = (previousAverageFoodWaitTime ?: 0).plus(foodWaitTime).div(numberOfOrdersProcessed)
 
         val previousAverageCourierWaitTime = stats.averageCourierWaitTime?.times(stats.ordersProcessed)
-        val averageCourierWaitTime = (previousAverageCourierWaitTime ?: 0).plus(courierWaitTime).div(numberOfOrdersProcessed)
+        val averageCourierWaitTime = (previousAverageCourierWaitTime
+            ?: 0).plus(courierWaitTime).div(numberOfOrdersProcessed)
 
         stats = Statistics(
             averageFoodWaitTime = averageFoodWaitTime,
