@@ -49,8 +49,12 @@ class FirstInFirstOutDelivery (
         val action: TimerTask.() -> Unit = {
             val courier = couriers.remove()
             val currentTimeInMillis = timeHelper.getCurrentTimeInMillis()
-            val courierWaitTime: Long = currentTimeInMillis - courier.arrivalPointInTime
-            stats.calculateStatistics(0, courierWaitTime)
+            val waitTime: Long = currentTimeInMillis - courier.arrivalPointInTime
+            if (waitTime > 0) {
+                stats.calculateStatistics(0, waitTime)
+            } else {
+                stats.calculateStatistics(waitTime * -1, 0)
+            }
         }
 
         timer.schedule(timerTask(action), order.prepTime * 1000L)

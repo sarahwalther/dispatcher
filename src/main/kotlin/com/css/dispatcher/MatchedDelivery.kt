@@ -26,7 +26,7 @@ class MatchedDelivery (
         }
 
         val action: TimerTask.() -> Unit = {
-            stats.calculateStatistics(foodWaitTime, courierWaitTime * 1000L)
+            stats.calculateStatistics(foodWaitTime * 1000L, courierWaitTime * 1000L)
         }
 
         timer.schedule(timerTask(action), order.prepTime * 1000L)

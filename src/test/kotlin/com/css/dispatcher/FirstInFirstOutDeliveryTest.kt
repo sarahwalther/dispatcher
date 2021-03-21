@@ -74,23 +74,58 @@ class FirstInFirstOutDeliveryTest {
             .thenReturn(slowerCourier)
             .thenReturn(fasterCourier)
 
+        val firstTimeOrderIsReceivedTimeStamp: Long = 100000
+        val secondTimeOrderIsReceivedTimeStamp: Long = 500000
+        val firstOrderFinishedTimeStamp: Long = firstTimeOrderIsReceivedTimeStamp + (zeroTimeOrder.prepTime * 10000)
+        val secondOrderFinishedTimeStamp: Long = secondTimeOrderIsReceivedTimeStamp + (order.prepTime * 1000)
+
         `when`(timeHelper.getCurrentTimeInMillis())
-            .thenReturn(100000)
-            .thenReturn(300000)
-            .thenReturn(500000)
-            .thenReturn(700000)
+            .thenReturn(firstTimeOrderIsReceivedTimeStamp)
+            .thenReturn(firstOrderFinishedTimeStamp)
+            .thenReturn(secondTimeOrderIsReceivedTimeStamp)
+            .thenReturn(secondOrderFinishedTimeStamp)
 
         firstInFirstOutDelivery.dispatch(zeroTimeOrder)
         firstInFirstOutDelivery.dispatch(order)
 
-        val foodWaitTimeCaptor = argumentCaptor<Int>()
+        val foodWaitTimeCaptor = argumentCaptor<Long>()
         val courierWaitTimeCaptor = argumentCaptor<Long>()
-
 
         sleep(16000)
         verify(stats, times(2)).calculateStatistics(foodWaitTimeCaptor.capture(), courierWaitTimeCaptor.capture())
 
-        assertEquals(197000L, courierWaitTimeCaptor.firstValue)
-        assertEquals(585000L, courierWaitTimeCaptor.secondValue)
+        assertEquals(385000, courierWaitTimeCaptor.firstValue)
+        assertEquals(391000, courierWaitTimeCaptor.secondValue)
+
+        assertEquals(0, foodWaitTimeCaptor.firstValue)
+        assertEquals(0, foodWaitTimeCaptor.secondValue)
+    }
+
+    @Test
+    internal fun `when the food is ready and there is not a courier yet, it calculates the wait time correctly`() {
+        timer = Timer()
+        firstInFirstOutDelivery = FirstInFirstOutDelivery(dispatcher, timer, stats, timeHelper)
+
+        val slowerCourier = Courier(15)
+        `when`(dispatcher.requestCourier())
+            .thenReturn(slowerCourier)
+
+        val firstTimeOrderIsReceivedTimeStamp: Long = 100000
+        val firstOrderFinishedTimeStamp: Long = firstTimeOrderIsReceivedTimeStamp + (zeroTimeOrder.prepTime * 1000)
+
+        `when`(timeHelper.getCurrentTimeInMillis())
+            .thenReturn(firstTimeOrderIsReceivedTimeStamp)
+            .thenReturn(firstOrderFinishedTimeStamp)
+
+        firstInFirstOutDelivery.dispatch(zeroTimeOrder)
+
+        val foodWaitTimeCaptor = argumentCaptor<Long>()
+        val courierWaitTimeCaptor = argumentCaptor<Long>()
+
+        sleep(16000)
+        verify(stats).calculateStatistics(foodWaitTimeCaptor.capture(), courierWaitTimeCaptor.capture())
+
+        assertEquals(0, courierWaitTimeCaptor.firstValue)
+        assertEquals(14000, foodWaitTimeCaptor.firstValue)
     }
 }

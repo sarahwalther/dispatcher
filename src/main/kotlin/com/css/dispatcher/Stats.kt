@@ -2,7 +2,7 @@ package com.css.dispatcher
 
 interface Stats {
     fun calculateStatistics(courier: Courier): Statistics
-    fun calculateStatistics(foodWaitTime: Int, courierWaitTime: Long): Statistics
+    fun calculateStatistics(foodWaitTime: Long, courierWaitTime: Long): Statistics
 }
 
 class DefaultStats: Stats {
@@ -27,7 +27,7 @@ class DefaultStats: Stats {
         return stats
     }
 
-    override fun calculateStatistics(foodWaitTime: Int, courierWaitTime: Long): Statistics {
+    override fun calculateStatistics(foodWaitTime: Long, courierWaitTime: Long): Statistics {
         val numberOfOrdersProcessed = stats.ordersProcessed + 1
 
         val previousAverageFoodWaitTime = stats.averageFoodWaitTime?.times(stats.ordersProcessed)
