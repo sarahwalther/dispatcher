@@ -61,14 +61,14 @@ class FirstInFirstOutDeliveryTest {
         timer = Timer()
         firstInFirstOutDelivery = FirstInFirstOutDelivery(dispatcher, timer, stats, timeHelper)
 
-        val slowerCourier = Courier(15)
-        val fasterCourier = Courier(3)
+        val slowerCourier = Courier(2)
+        val fasterCourier = Courier(1)
         `when`(dispatcher.requestCourier())
             .thenReturn(slowerCourier)
             .thenReturn(fasterCourier)
 
-        val firstTimeOrderIsReceivedTimeStamp: Long = 100000
-        val secondTimeOrderIsReceivedTimeStamp: Long = 500000
+        val firstTimeOrderIsReceivedTimeStamp: Long = 10000
+        val secondTimeOrderIsReceivedTimeStamp: Long = 30000
         val firstOrderFinishedTimeStamp: Long = firstTimeOrderIsReceivedTimeStamp + (zeroTimeOrder.prepTime * 10000)
         val secondOrderFinishedTimeStamp: Long = secondTimeOrderIsReceivedTimeStamp + (order.prepTime * 1000)
 
@@ -84,11 +84,11 @@ class FirstInFirstOutDeliveryTest {
         val foodWaitTimeCaptor = argumentCaptor<Long>()
         val courierWaitTimeCaptor = argumentCaptor<Long>()
 
-        sleep(16000)
+        sleep(5000)
         verify(stats, times(2)).calculateStatistics(foodWaitTimeCaptor.capture(), courierWaitTimeCaptor.capture())
 
-        assertEquals(385000, courierWaitTimeCaptor.firstValue)
-        assertEquals(391000, courierWaitTimeCaptor.secondValue)
+        assertEquals(9000, courierWaitTimeCaptor.firstValue)
+        assertEquals(22000, courierWaitTimeCaptor.secondValue)
 
         assertEquals(0, foodWaitTimeCaptor.firstValue)
         assertEquals(0, foodWaitTimeCaptor.secondValue)
@@ -99,11 +99,11 @@ class FirstInFirstOutDeliveryTest {
         timer = Timer()
         firstInFirstOutDelivery = FirstInFirstOutDelivery(dispatcher, timer, stats, timeHelper)
 
-        val slowerCourier = Courier(15)
+        val slowerCourier = Courier(3)
         `when`(dispatcher.requestCourier())
             .thenReturn(slowerCourier)
 
-        val firstTimeOrderIsReceivedTimeStamp: Long = 100000
+        val firstTimeOrderIsReceivedTimeStamp: Long = 10000
         val firstOrderFinishedTimeStamp: Long = firstTimeOrderIsReceivedTimeStamp + (zeroTimeOrder.prepTime * 1000)
 
         `when`(timeHelper.getCurrentTimeInMillis())
@@ -115,10 +115,10 @@ class FirstInFirstOutDeliveryTest {
         val foodWaitTimeCaptor = argumentCaptor<Long>()
         val courierWaitTimeCaptor = argumentCaptor<Long>()
 
-        sleep(16000)
+        sleep(3500)
         verify(stats).calculateStatistics(foodWaitTimeCaptor.capture(), courierWaitTimeCaptor.capture())
 
         assertEquals(0, courierWaitTimeCaptor.firstValue)
-        assertEquals(14000, foodWaitTimeCaptor.firstValue)
+        assertEquals(2000, foodWaitTimeCaptor.firstValue)
     }
 }

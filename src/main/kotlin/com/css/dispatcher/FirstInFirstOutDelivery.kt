@@ -28,7 +28,6 @@ class FirstInFirstOutDelivery (
         newCourier.arrivalPointInTime = timeHelper.getCurrentTimeInMillis() + (newCourier.arrivalTime.toMillis())
         couriers.add(newCourier)
 
-//        TODO: Make it so the courier wait time is respected in the execution
         val action: TimerTask.() -> Unit = {
             val courier = couriers.remove()
             val waitTime: Long = timeHelper.getCurrentTimeInMillis() - courier.arrivalPointInTime
