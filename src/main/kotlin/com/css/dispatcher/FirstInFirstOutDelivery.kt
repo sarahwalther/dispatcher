@@ -1,6 +1,7 @@
 package com.css.dispatcher
 
 import java.util.*
+import java.util.concurrent.CountDownLatch
 import kotlin.concurrent.timerTask
 
 
@@ -25,7 +26,7 @@ class FirstInFirstOutDelivery (
 
     override fun dispatch(order: Order) {
         val newCourier = dispatcher.requestCourier()
-        newCourier.arrivalPointInTime = timeHelper.getCurrentTimeInMillis() + (newCourier.arrivalTime * 1000)
+        newCourier.arrivalPointInTime = timeHelper.getCurrentTimeInMillis() + (newCourier.arrivalTime.toMillis())
         couriers.add(newCourier)
 
 //        TODO: Make it so the courier wait time is respected in the execution
@@ -39,7 +40,10 @@ class FirstInFirstOutDelivery (
             }
         }
 
-        timer.schedule(timerTask(action), order.prepTime * 1000L)
+        timer.schedule(timerTask(action), order.prepTime.toMillis())
     }
+}
 
+fun Int.toMillis(): Long {
+    return this * 1000L
 }
