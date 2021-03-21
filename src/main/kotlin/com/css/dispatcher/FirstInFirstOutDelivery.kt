@@ -21,13 +21,13 @@ class DefaultTimeHelper: TimeHelper {
 
 }
 
-class CustomerComparator {
+class CourierArrivalComparator {
 
     companion object : Comparator<Courier> {
 
         override fun compare(a: Courier, b: Courier): Int = when {
-            a.arrivalPointInTime != b.arrivalPointInTime -> a.arrivalPointInTime.toInt() - b.arrivalPointInTime.toInt()
-            else -> a.arrivalPointInTime.compareTo(b.arrivalPointInTime)
+            a.arrivalPointInTime != b.arrivalPointInTime -> Math.toIntExact(b.arrivalPointInTime - a.arrivalPointInTime)
+            else -> a.arrivalTime.compareTo(b.arrivalTime)
         }
     }
 }
@@ -38,8 +38,7 @@ class FirstInFirstOutDelivery (
     private val stats: Stats,
     private val timeHelper: TimeHelper
 ): DeliveryStrategy {
-    private val couriers: PriorityQueue<Courier> = PriorityQueue(CustomerComparator)
-
+    private val couriers: PriorityQueue<Courier> = PriorityQueue(CourierArrivalComparator)
 
     override fun dispatch(order: Order) {
         val newCourier = dispatcher.requestCourier()
@@ -49,7 +48,8 @@ class FirstInFirstOutDelivery (
 
         val action: TimerTask.() -> Unit = {
             val courier = couriers.remove()
-            val courierWaitTime: Long = timeHelper.getCurrentTimeInMillis() - courier.arrivalPointInTime
+            val currentTimeInMillis = timeHelper.getCurrentTimeInMillis()
+            val courierWaitTime: Long = currentTimeInMillis - courier.arrivalPointInTime
             stats.calculateStatistics(0, courierWaitTime)
         }
 
