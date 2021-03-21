@@ -1,22 +1,27 @@
 package com.css.dispatcher
 
+import com.nhaarman.mockitokotlin2.argumentCaptor
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.verify
-import org.mockito.Mockito.any
-import org.mockito.Mockito.eq
-import org.mockito.Mockito.times
+import org.mockito.ArgumentCaptor
+import org.mockito.Captor
+import org.mockito.Mockito.*
 import java.lang.Thread.sleep
 import java.util.*
 
-internal class FirstInFirstOutDeliveryTest {
+
+class FirstInFirstOutDeliveryTest {
     lateinit var firstInFirstOutDelivery: FirstInFirstOutDelivery
     private lateinit var dispatcher: Dispatcher
     private lateinit var timer: Timer
     private lateinit var stats: Stats
     private lateinit var timeHelper: TimeHelper
+
+//    @Captor
+//    private lateinit var foodWaitTimeCaptor: ArgumentCaptor<Int>
+//    @Captor
+//    private lateinit var courierWaitTimeCaptor: ArgumentCaptor<Long>
 
     private val order = Order(
         id = "456",
@@ -30,7 +35,7 @@ internal class FirstInFirstOutDeliveryTest {
     )
 
     @BeforeEach
-    internal fun setUp() {
+    fun setUp() {
         dispatcher = mock(Dispatcher::class.java)
         timer = mock(Timer::class.java)
         stats = mock(Stats::class.java)
@@ -42,14 +47,14 @@ internal class FirstInFirstOutDeliveryTest {
     }
 
     @Test
-    internal fun `dispatch requests a courier when receiving an order`() {
+    fun `dispatch requests a courier when receiving an order`() {
         firstInFirstOutDelivery.dispatch(zeroTimeOrder)
 
         verify(dispatcher).requestCourier()
     }
 
     @Test
-    internal fun `dispatch schedules a delivery`() {
+    fun `dispatch schedules a delivery`() {
         val courier = Courier(3)
         `when`(dispatcher.requestCourier()).thenReturn(courier)
 
@@ -78,10 +83,14 @@ internal class FirstInFirstOutDeliveryTest {
         firstInFirstOutDelivery.dispatch(zeroTimeOrder)
         firstInFirstOutDelivery.dispatch(order)
 
-        sleep(3000)
-        verify(stats, times(1)).calculateStatistics(0, 197000L)
-        verify(stats, times(1)).calculateStatistics(11, 0)
+        val foodWaitTimeCaptor = argumentCaptor<Int>()
+        val courierWaitTimeCaptor = argumentCaptor<Long>()
 
-//        Mockito.verify(timer).schedule(Mockito.any(), Mockito.eq(4000L))
+
+        sleep(16000)
+        verify(stats, times(2)).calculateStatistics(foodWaitTimeCaptor.capture(), courierWaitTimeCaptor.capture())
+
+        assertEquals(197000L, courierWaitTimeCaptor.firstValue)
+        assertEquals(585000L, courierWaitTimeCaptor.secondValue)
     }
 }
