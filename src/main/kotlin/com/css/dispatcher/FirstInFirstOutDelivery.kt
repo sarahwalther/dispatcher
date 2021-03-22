@@ -1,6 +1,7 @@
 package com.css.dispatcher
 
 import java.util.*
+import java.util.concurrent.PriorityBlockingQueue
 import kotlin.concurrent.timerTask
 
 
@@ -21,7 +22,7 @@ class FirstInFirstOutDelivery (
     private val stats: Stats = DefaultStats(),
     private val timeHelper: TimeHelper = DefaultTimeHelper()
 ): DeliveryStrategy {
-    private val couriers: PriorityQueue<Courier> = PriorityQueue(CourierArrivalComparator)
+    private val couriers: PriorityBlockingQueue<Courier> = PriorityBlockingQueue(12, CourierArrivalComparator)
 
     override fun dispatch(order: Order) {
 

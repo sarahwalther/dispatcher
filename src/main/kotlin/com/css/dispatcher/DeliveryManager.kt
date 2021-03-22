@@ -2,12 +2,13 @@ package com.css.dispatcher
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import java.io.File
+import java.lang.Thread.sleep
 
 
 class DeliveryManager(
     private val deliveryStrategy: DeliveryStrategy
 ) {
-    fun processOrders() {
+    fun process2OrdersPerSecond(delay: () -> Unit = { sleep(500) }) {
         val mapper = ObjectMapper()
 
         val jsonString: String = File("./src/main/resources/dispatch_orders.json").readText(Charsets.UTF_8)
@@ -17,6 +18,7 @@ class DeliveryManager(
 
         orders.forEach {
             deliveryStrategy.dispatch(it)
+            delay()
         }
     }
 }

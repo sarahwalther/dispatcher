@@ -19,7 +19,7 @@ class DeliveryManagerTest {
 
     @Test
     fun `processOrders schedules the orders`() {
-        deliveryManager.processOrders()
+        deliveryManager.process2OrdersPerSecond {}
 
         val ordersCaptor = argumentCaptor<Order>()
 
