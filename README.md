@@ -20,3 +20,12 @@ There are 2 ways of running the simulator
 ```bash
 $ ./gradlew test
 ```
+
+### Thoughts
+Some of the tests are pretty slow as written. Ideally I'd spend a little more time figuring out how to manipulate the timer inside of the action block for the TimerTask in the FirstInFirstOutDelivery.
+
+As written, in order to compare the efficiency between the 2 strategies the function has to get called with 2 different arguments.
+
+I made use of Kotlin's native capabilities to deal with threading as much as possible.
+
+The system is designed in a way that would enable users to add new strategies easily going forward. The existing ones should not need altering for that to be possible.
