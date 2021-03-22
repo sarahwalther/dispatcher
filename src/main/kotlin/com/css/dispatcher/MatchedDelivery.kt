@@ -25,6 +25,7 @@ class MatchedDelivery (
         }
 
         val action: TimerTask.() -> Unit = {
+            println("Dispatching courier for order #${order.id}")
             stats.calculateStatistics(foodWaitTime.toMillis(), courierWaitTime.toMillis())
         }
 

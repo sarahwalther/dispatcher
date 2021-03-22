@@ -6,7 +6,7 @@ import org.mockito.Mockito.*
 import java.lang.Thread.sleep
 import java.util.*
 
-internal class MatchedDeliveryTest {
+class MatchedDeliveryTest {
     lateinit var matchedDelivery: MatchedDelivery
     private lateinit var dispatcher: Dispatcher
     private lateinit var timer: Timer
@@ -61,6 +61,6 @@ internal class MatchedDeliveryTest {
         matchedDelivery.dispatch(zeroTimeOrder)
 
         sleep(5)
-        verify(stats).calculateStatistics(3, 0)
+        verify(stats).calculateStatistics(3000, 0)
     }
 }

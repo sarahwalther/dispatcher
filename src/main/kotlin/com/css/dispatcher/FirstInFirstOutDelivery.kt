@@ -24,11 +24,13 @@ class FirstInFirstOutDelivery (
     private val couriers: PriorityQueue<Courier> = PriorityQueue(CourierArrivalComparator)
 
     override fun dispatch(order: Order) {
+
         val newCourier = dispatcher.requestCourier()
         newCourier.arrivalPointInTime = timeHelper.getCurrentTimeInMillis() + (newCourier.arrivalTime.toMillis())
         couriers.add(newCourier)
 
         val action: TimerTask.() -> Unit = {
+            println("Dispatching courier for order #${order.id}")
             val courier = couriers.remove()
             val waitTime: Long = timeHelper.getCurrentTimeInMillis() - courier.arrivalPointInTime
             if (waitTime > 0) {

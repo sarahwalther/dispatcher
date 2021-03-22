@@ -1,5 +1,8 @@
 # Delivery Simulator
 
+### Description
+This application ia a simulation that compares the efficiency of two different approaches of dispatching couriers to deliver meals. 
+
 ### Running the simulation
 There are 2 ways of running the simulator 
 - MATCHED
@@ -12,3 +15,8 @@ There are 2 ways of running the simulator
     ```bash
     $ ./gradlew bootRun -Pargs=FIRST_IN_FIRST_OUT
     ```
+
+### Running the tests
+```bash
+$ ./gradlew test
+```
